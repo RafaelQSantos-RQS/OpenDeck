@@ -31,7 +31,7 @@ pub fn run() {
 
                 Migrator::up(&db, None)
                     .await
-                    .expect("Faile to run migrations");
+                    .expect("Failed to run migrations");
 
                 db
             });

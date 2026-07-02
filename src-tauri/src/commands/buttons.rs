@@ -1,5 +1,8 @@
 use sea_orm::ActiveValue::Set;
-use sea_orm::{ActiveModelTrait, ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter, QueryOrder};
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, DeleteResult, EntityTrait, PaginatorTrait, QueryFilter,
+    QueryOrder,
+};
 use tauri::State;
 
 use crate::models::button::Entity as Buttons;
@@ -26,6 +29,10 @@ pub async fn create_button(
     action_value: Option<String>,
     background_color: Option<String>,
 ) -> Result<Button, String> {
+    if position < 0 || position > 15 {
+        return Err("Position must be between 0 and 15.".to_string());
+    }
+
     let count = Buttons::find()
         .count(&state.db)
         .await
@@ -91,16 +98,14 @@ pub async fn update_button(
 
 #[tauri::command]
 pub async fn delete_button(state: State<'_, AppState>, id: i64) -> Result<(), String> {
-    let button = Buttons::find_by_id(id)
-        .one(&state.db)
+    let result: DeleteResult = Buttons::delete_by_id(id)
+        .exec(&state.db)
         .await
-        .map_err(|e| e.to_string())?
-        .ok_or_else(|| format!("Button not found: {}", id))?;
+        .map_err(|e| e.to_string())?;
 
-    let active: ActiveModel = button.into();
-    active
-        .delete(&state.db)
-        .await
-        .map_err(|e| e.to_string())
-        .map(|_| ())
+    if result.rows_affected == 0 {
+        return Err(format!("Button not found: {}", id));
+    }
+
+    Ok(())
 }
