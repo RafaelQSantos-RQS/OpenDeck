@@ -5,106 +5,94 @@ use sea_orm::{
 };
 use tauri::State;
 
-use crate::models::button::Entity as Buttons;
-use crate::models::{ActionType, ActiveModel, DisplayMode, Model as Button};
+use crate::error::AppError;
+use crate::models::button::{
+    ActiveModel,
+    CreateButtonData,
+    Entity as Buttons,
+    Model as Button,
+    UpdateButtonData
+};
 use crate::state::AppState;
 
 #[tauri::command]
-pub async fn get_buttons(state: State<'_, AppState>) -> Result<Vec<Button>, String> {
+pub async fn get_buttons(state: State<'_, AppState>) -> Result<Vec<Button>, AppError> {
     Buttons::find()
         .order_by_asc(crate::models::button::Column::Position)
         .all(&state.db)
         .await
-        .map_err(|e| e.to_string())
+        .map_err(AppError::from)
 }
 
 #[tauri::command]
 pub async fn create_button(
     state: State<'_, AppState>,
-    position: i32,
-    label: Option<String>,
-    icon: Option<String>,
-    display_mode: DisplayMode,
-    action_type: ActionType,
-    action_value: Option<String>,
-    background_color: Option<String>,
-) -> Result<Button, String> {
-    if position < 0 || position > 15 {
-        return Err("Position must be between 0 and 15.".to_string());
+    data: CreateButtonData,
+) -> Result<Button, AppError> {
+    if !(0..=15).contains(&data.position) {
+        return Err(AppError::InvalidPosition {
+            position: data.position,
+            min: 0,
+            max: 15,
+        });
     }
 
-    let count = Buttons::find()
-        .count(&state.db)
-        .await
-        .map_err(|e| e.to_string())?;
+    let count = Buttons::find().count(&state.db).await?;
 
     if count >= 16 {
-        return Err("Grid is full! Maximum of 16 buttons.".to_string());
+        return Err(AppError::GridFull { max_positions: 16 });
     }
 
     let exists = Buttons::find()
-        .filter(crate::models::button::Column::Position.eq(position))
+        .filter(crate::models::button::Column::Position.eq(data.position))
         .one(&state.db)
-        .await
-        .map_err(|e| e.to_string())?
+        .await?
         .is_some();
     if exists {
-        return Err(format!(
-            "Position {} is already occupied. Use update instead.",
-            position
-        ));
+        return Err(AppError::PositionTaken { position: data.position });
     }
 
     let active = ActiveModel {
-        position: Set(position),
-        label: Set(label),
-        icon: Set(icon),
-        display_mode: Set(display_mode),
-        action_type: Set(action_type),
-        action_value: Set(action_value),
-        background_color: Set(background_color),
+        position: Set(data.position),
+        label: Set(data.fields.label),
+        icon: Set(data.fields.icon),
+        display_mode: Set(data.fields.display_mode),
+        action_type: Set(data.fields.action_type),
+        action_value: Set(data.fields.action_value),
+        background_color: Set(data.fields.background_color),
         ..Default::default()
     };
 
-    active.insert(&state.db).await.map_err(|e| e.to_string())
+    active.insert(&state.db).await.map_err(AppError::from)
 }
 
 #[tauri::command]
 pub async fn update_button(
     state: State<'_, AppState>,
     id: i64,
-    label: Option<String>,
-    icon: Option<String>,
-    display_mode: DisplayMode,
-    action_type: ActionType,
-    action_value: Option<String>,
-    background_color: Option<String>,
-) -> Result<Button, String> {
+    data: UpdateButtonData,
+) -> Result<Button, AppError> {
     let button = Buttons::find_by_id(id)
         .one(&state.db)
-        .await
-        .map_err(|e| e.to_string())?
-        .ok_or_else(|| format!("Button not found: {}", id))?;
+        .await?
+        .ok_or(AppError::NotFound { id })?;
 
     let mut active: ActiveModel = button.into();
-    active.label = Set(label);
-    active.icon = Set(icon);
-    active.display_mode = Set(display_mode);
-    active.action_type = Set(action_type);
-    active.action_value = Set(action_value);
-    active.background_color = Set(background_color);
-    active.update(&state.db).await.map_err(|e| e.to_string())
+    active.label = Set(data.fields.label);
+    active.icon = Set(data.fields.icon);
+    active.display_mode = Set(data.fields.display_mode);
+    active.action_type = Set(data.fields.action_type);
+    active.action_value = Set(data.fields.action_value);
+    active.background_color = Set(data.fields.background_color);
+    active.update(&state.db).await.map_err(AppError::from)
 }
 
 #[tauri::command]
-pub async fn delete_button(state: State<'_, AppState>, id: i64) -> Result<(), String> {
-    let result: DeleteResult = Buttons::delete_by_id(id)
-        .exec(&state.db)
-        .await
-        .map_err(|e| e.to_string())?;
+pub async fn delete_button(state: State<'_, AppState>, id: i64) -> Result<(), AppError> {
+    let result: DeleteResult = Buttons::delete_by_id(id).exec(&state.db).await?;
 
     if result.rows_affected == 0 {
-        return Err(format!("Button not found: {}", id));
+        return Err(AppError::NotFound { id });
     }
 
     Ok(())
