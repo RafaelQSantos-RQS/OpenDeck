@@ -29,18 +29,18 @@ pub async fn create_button(
     state: State<'_, AppState>,
     data: CreateButtonData,
 ) -> Result<Button, AppError> {
-    if !(0..=15).contains(&data.position) {
+    if !(0..=6).contains(&data.position) {
         return Err(AppError::InvalidPosition {
             position: data.position,
             min: 0,
-            max: 15,
+            max: 5,
         });
     }
 
     let count = Buttons::find().count(&state.db).await?;
 
-    if count >= 16 {
-        return Err(AppError::GridFull { max_positions: 16 });
+    if count >= 6 {
+        return Err(AppError::GridFull { max_positions: 6 });
     }
 
     let exists = Buttons::find()
