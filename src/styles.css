@@ -1,1 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
+[data-tui-theme] {
+    --tui-theme: dark;
+}
+
+tui-root {
+    min-height: 100vh;
+    background: #161616;
+}
