@@ -1,0 +1,181 @@
+<div class="editor">
+  <!-- ═══ Custom Titlebar ═══ -->
+  <div class="titlebar">
+    <div class="titlebar-drag" data-tauri-drag-region>
+      <tui-icon icon="@tui.settings" />
+      <span class="titlebar-text">{{ isEditing() ? 'Edit Button' : 'New Button' }}</span>
+    </div>
+    <div class="titlebar-controls">
+      <button
+        class="titlebar-btn-close"
+        appearance="icon"
+        tuiButtonX
+        size="xs"
+        type="button"
+        title="Close"
+        (click)="close()"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ Form Content ═══ -->
+  <div class="form">
+    <!-- 👁️ Live Preview -->
+    <div class="preview-section">
+      <span class="field-label">Preview</span>
+      <div
+        class="preview-card"
+        [style.background-color]="backgroundColor || '#141414'"
+      >
+        @if (showIcon()) {
+          @if (icon) {
+            <span class="preview-icon material-symbols-outlined">{{ icon }}</span>
+          } @else {
+            <tui-icon [icon]="fallbackIcon()" class="preview-icon-tui" />
+          }
+        }
+        @if (showLabel()) {
+          <span class="preview-label">{{ label }}</span>
+        }
+        @if (!showIcon() && !showLabel()) {
+          <tui-icon icon="@tui.image" class="preview-placeholder" />
+        }
+      </div>
+    </div>
+
+    <!-- Name -->
+    <tui-textfield
+      tuiTextfieldSize="m"
+      [class.field-error]="nameError()"
+    >
+      <label tuiLabel>Name</label>
+      <textarea
+        tuiTextarea
+        [(ngModel)]="label"
+        [limit]="20"
+        [rows]="4"
+        placeholder="Button Name"
+        [attr.aria-label]="'Name'"
+      ></textarea>
+      @if (nameError()) {
+        <span class="error-text">{{ nameError() }}</span>
+      }
+    </tui-textfield>
+
+    <!-- Icon -->
+    <tui-textfield>
+      <label tuiLabel>Icon</label>
+      <input tuiInput [(ngModel)]="icon" placeholder="Ex: home, settings" [attr.aria-label]="'Icon'" />
+    </tui-textfield>
+
+    <!-- Display mode + Action type (side by side) -->
+    <div class="row">
+      <div class="row-field">
+        <span class="field-label">Display mode</span>
+        <button
+          tuiButton
+          tuiChevron
+          appearance="floating"
+          type="button"
+          size="m"
+          [attr.aria-label]="'Display mode'"
+          [attr.aria-expanded]="displayOpen()"
+          [tuiDropdown]="displayDropdown"
+          [tuiDropdownManual]="displayOpen()"
+          [tuiObscuredEnabled]="displayOpen()"
+          (click)="toggleDisplay()"
+          (tuiActiveZoneChange)="onDisplayActiveZone($event)"
+          (tuiObscured)="onDisplayObscured($event)"
+        >
+          <tui-icon [icon]="displayIcon()" />
+          {{ displayLabel() }}
+          <ng-template #displayDropdown>
+            <tui-data-list>
+              @for (opt of displayOptions; track opt.value) {
+                <button
+                  tuiOption
+                  type="button"
+                  [class.selected]="opt.value === displayMode()"
+                  (click)="selectDisplay(opt.value)"
+                >
+                  <tui-icon [icon]="opt.icon" />
+                  <span tuiTitle>
+                    {{ opt.label }}
+                    <span tuiSubtitle>{{ opt.description }}</span>
+                  </span>
+                </button>
+              }
+            </tui-data-list>
+          </ng-template>
+        </button>
+      </div>
+
+      <div class="row-field">
+        <span class="field-label">Action type</span>
+        <button
+          tuiButton
+          tuiChevron
+          appearance="floating"
+          type="button"
+          size="m"
+          [attr.aria-label]="'Action type'"
+          [attr.aria-expanded]="actionOpen()"
+          [tuiDropdown]="actionDropdown"
+          [tuiDropdownManual]="actionOpen()"
+          [tuiObscuredEnabled]="actionOpen()"
+          (click)="toggleAction()"
+          (tuiActiveZoneChange)="onActionActiveZone($event)"
+          (tuiObscured)="onActionObscured($event)"
+        >
+          <tui-icon [icon]="actionIcon()" />
+          {{ actionLabel() }}
+          <ng-template #actionDropdown>
+            <tui-data-list>
+              @for (opt of actionOptions; track opt.value) {
+                <button
+                  tuiOption
+                  type="button"
+                  [class.selected]="opt.value === actionType()"
+                  (click)="selectAction(opt.value)"
+                >
+                  <tui-icon [icon]="opt.icon" />
+                  <span tuiTitle>
+                    {{ opt.label }}
+                    <span tuiSubtitle>{{ opt.description }}</span>
+                  </span>
+                </button>
+              }
+            </tui-data-list>
+          </ng-template>
+        </button>
+      </div>
+    </div>
+
+    <!-- Action Value -->
+    <tui-textfield [class.field-error]="actionValueError()">
+      <label tuiLabel>{{ actionValueLabel() }}</label>
+      <input tuiInput [(ngModel)]="actionValue" [placeholder]="actionValuePlaceholder()" [attr.aria-label]="actionValueLabel()" />
+      @if (actionValueError()) {
+        <span class="error-text">{{ actionValueError() }}</span>
+      }
+    </tui-textfield>
+
+    <!-- Background Color -->
+    <tui-textfield>
+      <label tuiLabel>Background color</label>
+      <input tuiInputColor [(ngModel)]="backgroundColor" placeholder="#1DB954" [attr.aria-label]="'Background color'" />
+    </tui-textfield>
+
+    <!-- Bottom actions -->
+    <div class="actions">
+      <button appearance="secondary" size="m" tuiButton type="button" (click)="onCancel()">
+        Cancel
+      </button>
+      <button size="m" tuiButton type="button" (click)="onSave()">
+        {{ isEditing() ? 'Save' : 'Create' }}
+      </button>
+    </div>
+  </div>
+</div>

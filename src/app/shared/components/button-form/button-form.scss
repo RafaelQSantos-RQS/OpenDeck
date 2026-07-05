@@ -1,0 +1,181 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+  block-size: 100vh;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+/* ── Custom Titlebar ── */
+.titlebar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 36px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--tui-border-normal);
+  user-select: none;
+}
+
+.titlebar-drag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  inline-size: 100%;
+  block-size: 100%;
+  cursor: default;
+}
+
+.titlebar-text {
+  font: var(--tui-typography-body-m);
+  color: var(--tui-text-primary);
+}
+
+.titlebar-controls {
+  display: flex;
+  align-items: center;
+  block-size: 100%;
+  position: absolute;
+  right: 8px;
+  top: 0;
+}
+
+/* ── macOS-style close button (TuiButtonX) ── */
+.titlebar-btn-close {
+  transition: background 0.15s;
+  border-radius: 50%;
+
+  &:hover {
+    background: #ff5f57;
+    color: var(--tui-text-primary);
+  }
+}
+
+/* ── Preview ── */
+.preview-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.preview-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  inline-size: 100px;
+  block-size: 100px;
+  border-radius: 12px;
+  border: 1px solid var(--tui-border-normal);
+  margin: 0 auto;
+}
+
+.preview-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.preview-icon-tui {
+  font-size: 2rem;
+  inline-size: 2rem;
+  block-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-label {
+  font: var(--tui-typography-body-m);
+  color: #fff;
+  text-align: center;
+  word-break: break-word;
+  max-inline-size: 100%;
+  padding: 0 6px;
+  line-height: 1.2;
+}
+
+.preview-placeholder {
+  font-size: 1.5rem;
+  opacity: 0.3;
+}
+
+/* ── Form ── */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ── Give the name textarea more room ── */
+.form > tui-textfield:first-child {
+  flex-shrink: 0;
+}
+
+
+
+/* ── Rows (side-by-side fields) ── */
+.row {
+  display: flex;
+  gap: 12px;
+}
+
+.row-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ── Field labels ── */
+.field-label {
+  font: var(--tui-typography-body-s);
+  color: var(--tui-text-secondary);
+}
+
+/* ── Dropdown trigger buttons ── */
+button[tuiButton][tuiChevron] {
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+tui-data-list {
+  min-inline-size: 200px;
+  padding: 4px;
+
+  button[tuiOption] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    inline-size: 100%;
+
+    &.selected {
+      background: var(--tui-background-neutral-2);
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+/* ── Validation ── */
+.field-error {
+  --tui-border-normal: var(--tui-status-negative);
+}
+
+.error-text {
+  font: var(--tui-typography-body-s);
+  color: var(--tui-status-negative);
+  margin-top: 2px;
+}
