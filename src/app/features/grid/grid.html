@@ -1,0 +1,20 @@
+<div class="grid">
+  @for (button of buttons; track button.id) {
+    <app-button-card
+      [button]="button"
+      (edit)="openEditor($event)"
+      (delete)="deleteButton($event)"
+    />
+  } @empty {
+    @for (_ of [].constructor(6); track $index) {
+      <button
+        appearance="floating"
+        tuiCardMedium
+        type="button"
+        (click)="openEditor(undefined, $index)"
+      >
+        <tui-icon icon="@tui.plus" />
+      </button>
+    }
+  }
+</div>

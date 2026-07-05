@@ -1,0 +1,27 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.grid {
+  outline: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 0px;
+
+  button[tuiCardMedium] {
+    aspect-ratio: 1;
+    inline-size: 130px;
+    block-size: 130px;
+    justify-content: center;
+    border-radius: 16px;
+    opacity: 0.35;
+    
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}

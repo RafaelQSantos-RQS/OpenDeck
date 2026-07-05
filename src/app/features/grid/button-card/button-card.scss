@@ -1,0 +1,46 @@
+.card {
+  position: relative;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  overflow: hidden;
+
+  .icon {
+    font-size: 1.5rem;
+  }
+
+  .fallback-icon {
+    font-size: 1.5rem;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .label {
+    font: var(--tui-typography-body-s);
+    text-align: center;
+    word-break: break-word;
+    max-inline-size: 100%;
+    padding: 0 4px;
+  }
+
+  .delete-btn {
+    position: absolute;
+    inset-block-start: 4px;
+    inset-inline-end: 4px;
+    opacity: 0;
+    transition: opacity 0.15s;
+    inline-size: 24px;
+    block-size: 24px;
+  }
+
+  &:hover .delete-btn {
+    opacity: 1;
+  }
+}
