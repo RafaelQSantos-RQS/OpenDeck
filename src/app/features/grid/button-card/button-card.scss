@@ -8,15 +8,23 @@
   gap: 4px;
   cursor: pointer;
   overflow: hidden;
+  border-radius: 20px;
+  transition: transform 0.15s ease;
 
-  .icon {
-    font-size: 1.5rem;
+  @media (hover: hover) {
+    &:hover {
+      transform: scale(1.12);
+    }
   }
 
-  .fallback-icon {
-    font-size: 1.5rem;
-    inline-size: 1.5rem;
-    block-size: 1.5rem;
+  &:active {
+    transform: scale(0.95);
+  }
+
+  .icon {
+    font-size: 2.5rem;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -25,22 +33,45 @@
   .label {
     font: var(--tui-typography-body-s);
     text-align: center;
-    word-break: break-word;
+    word-break: word-break;
     max-inline-size: 100%;
     padding: 0 4px;
   }
 
+  .edit-btn,
   .delete-btn {
     position: absolute;
     inset-block-start: 4px;
-    inset-inline-end: 4px;
     opacity: 0;
     transition: opacity 0.15s;
     inline-size: 24px;
     block-size: 24px;
   }
 
+  .edit-btn {
+    inset-inline-start: 4px;
+  }
+
+  .delete-btn {
+    inset-inline-end: 4px;
+  }
+
+  &:hover .edit-btn,
   &:hover .delete-btn {
     opacity: 1;
+  }
+}
+
+.add-slot {
+  opacity: 0.35;
+
+  tui-icon {
+    font-size: 3.5rem;
+    inline-size: 3.5rem;
+    block-size: 3.5rem;
+  }
+
+  &:hover {
+    opacity: 0.7;
   }
 }

@@ -1,20 +1,14 @@
-<div class="grid">
-  @for (button of buttons; track button.id) {
-    <app-button-card
-      [button]="button"
-      (edit)="openEditor($event)"
-      (delete)="deleteButton($event)"
-    />
-  } @empty {
-    @for (_ of [].constructor(6); track $index) {
-      <button
-        appearance="floating"
-        tuiCardMedium
-        type="button"
-        (click)="openEditor(undefined, $index)"
-      >
-        <tui-icon icon="@tui.plus" />
-      </button>
+<app-titlebar title="OpenDeck" id="titlebar" class="titlebar"></app-titlebar>
+<tui-loader [overlay]="true" [loading]="loading()">
+  <div class="grid">
+    @for (slot of slots; track $index; let pos = $index) {
+      <app-button-card
+        [button]="slot ?? undefined"
+        [position]="pos"
+        (edit)="openEditor($event)"
+        (delete)="deleteButton($event)"
+        (add)="openEditor(undefined, $event)"
+      />
     }
-  }
-</div>
+  </div>
+</tui-loader>

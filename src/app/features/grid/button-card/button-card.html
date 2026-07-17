@@ -1,31 +1,55 @@
-<div
-  tuiCardMedium
-  appearance="floating"
-  class="card"
-  [style.background-color]="button().background_color ?? undefined"
-  (click)="onCardClick($event)"
->
-  @if (button().display_mode !== 'text') {
-    @if (button().icon) {
-      <span class="icon material-symbols-outlined">{{ button().icon }}</span>
-    } @else {
-      <tui-icon class="fallback-icon" [icon]="fallbackIcon()" />
-    }
-  }
-  @if (button().display_mode !== 'icon' && button().label) {
-    <span class="label">{{ button().label }}</span>
-  }
-
-  <button
-    data-delete
-    class="delete-btn"
-    appearance="flat"
-    iconStart="@tui.x"
-    size="xs"
-    tuiIconButton
-    type="button"
-    (click)="delete.emit(button().id); $event.stopPropagation()"
+@if (isAddSlot()) {
+  <div
+    tuiCardMedium
+    appearance="floating"
+    class="card add-slot"
+    (click)="onClick()"
   >
-    Delete
-  </button>
-</div>
+    <tui-icon icon="@tui.plus" />
+  </div>
+} @else {
+  <div
+    tuiCardMedium
+    appearance="floating"
+    class="card"
+    [style.background-color]="button()!.background_color ?? undefined"
+    (click)="onCardClick($event)"
+  >
+    @if (button()!.display_mode !== 'text') {
+      @if (button()!.icon) {
+        <tui-icon class="icon" [icon]="'@tui.' + button()!.icon" />
+      } @else {
+        <tui-icon class="icon" [icon]="fallbackIcon()" />
+      }
+    }
+    @if (button()!.display_mode !== 'icon' && button()!.label) {
+      <span class="label">{{ button()!.label }}</span>
+    }
+
+    <button
+      data-edit
+      class="edit-btn"
+      appearance="flat"
+      iconStart="@tui.pencil"
+      size="xs"
+      tuiIconButton
+      type="button"
+      (click)="edit.emit(button()!); $event.stopPropagation()"
+    >
+      Edit
+    </button>
+
+    <button
+      data-delete
+      class="delete-btn"
+      appearance="flat"
+      iconStart="@tui.x"
+      size="xs"
+      tuiIconButton
+      type="button"
+      (click)="delete.emit(button()!.id); $event.stopPropagation()"
+    >
+      Delete
+    </button>
+  </div>
+}

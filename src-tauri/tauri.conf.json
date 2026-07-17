@@ -15,7 +15,8 @@
         "title": "opendeck",
         "width": 800,
         "height": 500,
-        "resizable": false
+        "resizable": false,
+        "decorations": false
       }
     ],
     "security": {

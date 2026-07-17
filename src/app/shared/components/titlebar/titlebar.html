@@ -1,0 +1,95 @@
+<div class="titlebar">
+    <div class="menu-section">
+        <button
+            class="hamburger-btn"
+            type="button"
+            (click)="toggleMenu()"
+        >
+            <tui-icon icon="@tui.menu" />
+        </button>
+
+        @if (menuOpen()) {
+            <div class="dropdown-backdrop" (click)="closeMenu()"></div>
+            <div class="dropdown-menu">
+                <button type="button" class="menu-item" (click)="onAbout()">
+                    <tui-icon icon="@tui.info" />
+                    About
+                </button>
+                <button type="button" class="menu-item" (click)="minimize(); closeMenu()">
+                    <tui-icon icon="@tui.minus" />
+                    Minimize
+                </button>
+                <button type="button" class="menu-item" (click)="close(); closeMenu()">
+                    <tui-icon icon="@tui.x" />
+                    Close
+                </button>
+            </div>
+        }
+    </div>
+
+    <div class="drag-region" data-tauri-drag-region>
+        {{ title() }}
+    </div>
+
+    <div class="controls">
+        <button (click)="minimize()" title="minimize">
+            <span class="icon-circle">
+                <tui-icon icon="@tui.minus" />
+            </span>
+        </button>
+        <button (click)="close()" title="close">
+            <span class="icon-circle">
+                <tui-icon icon="@tui.x" />
+            </span>
+        </button>
+    </div>
+</div>
+
+<ng-template
+    [(tuiDialog)]="aboutOpen"
+    [tuiDialogOptions]="{ label: 'About OpenDeck', size: 's' }"
+>
+    <div class="about-content">
+        <div class="about-header">
+            <tui-icon icon="@tui.layout-dashboard" class="about-icon" />
+            <div>
+                <h2 tuiTitle>OpenDeck</h2>
+                <p class="about-version">Version 0.1.0</p>
+            </div>
+        </div>
+
+        <p class="about-description">
+            Virtual stream deck — a 2×3 grid of customizable buttons
+            that trigger actions: open links, launch apps, or run commands.
+        </p>
+
+        <div class="about-divider"></div>
+
+        <div class="about-dev">
+            <tui-icon icon="@tui.user" />
+            <span>Developed by <strong>Rafael Santos</strong></span>
+        </div>
+
+        <a
+            class="about-link"
+            href="https://github.com/RafaelQSantos-RQS"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            <tui-icon icon="@tui.github" />
+            github.com/RafaelQSantos-RQS
+        </a>
+
+        <div class="about-footer">
+            <button
+                tuiButton
+                type="button"
+                appearance="flat"
+                size="m"
+                (click)="aboutOpen = false"
+            >
+                Close
+            </button>
+        </div>
+    </div>
+</ng-template>

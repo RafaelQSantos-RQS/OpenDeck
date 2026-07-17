@@ -19,4 +19,16 @@ export class ButtonService {
   deleteButton( id: number): Promise<void> {
     return invoke<void>("delete_button", {id});
   }
+
+  executeApp(path: string): Promise<void> {
+    return invoke<void>("execute_app", { path });
+  }
+
+  executeCommand(command: string): Promise<void> {
+    return invoke<void>("execute_command", { command });
+  }
+
+  validateApp(name: string): Promise<boolean> {
+    return invoke<boolean>("validate_app", { name });
+  }
 }

@@ -1,9 +1,9 @@
 <div class="editor">
   <!-- ═══ Custom Titlebar ═══ -->
   <div class="titlebar">
-    <div class="titlebar-drag" data-tauri-drag-region>
+    <div class="titlebar-drag">
       <tui-icon icon="@tui.settings" />
-      <span class="titlebar-text">{{ isEditing() ? 'Edit Button' : 'New Button' }}</span>
+      <span data-tauri-drag-region class="titlebar-text">{{ isEditing() ? 'Edit Button' : 'New Button' }}</span>
     </div>
     <div class="titlebar-controls">
       <button
@@ -30,11 +30,7 @@
         [style.background-color]="backgroundColor || '#141414'"
       >
         @if (showIcon()) {
-          @if (icon) {
-            <span class="preview-icon material-symbols-outlined">{{ icon }}</span>
-          } @else {
-            <tui-icon [icon]="fallbackIcon()" class="preview-icon-tui" />
-          }
+          <tui-icon [icon]="previewIcon()" class="preview-icon" />
         }
         @if (showLabel()) {
           <span class="preview-label">{{ label }}</span>
@@ -46,29 +42,89 @@
     </div>
 
     <!-- Name -->
-    <tui-textfield
-      tuiTextfieldSize="m"
-      [class.field-error]="nameError()"
-    >
-      <label tuiLabel>Name</label>
-      <textarea
-        tuiTextarea
-        [(ngModel)]="label"
-        [limit]="20"
-        [rows]="4"
-        placeholder="Button Name"
-        [attr.aria-label]="'Name'"
-      ></textarea>
-      @if (nameError()) {
-        <span class="error-text">{{ nameError() }}</span>
+    <div class="field-group">
+      <tui-textfield
+        tuiTextfieldSize="m"
+        [class.field-error]="nameError"
+      >
+        <label tuiLabel>Name</label>
+        <textarea
+          tuiTextarea
+          [(ngModel)]="label"
+          [limit]="20"
+          [rows]="4"
+          placeholder="Button Name"
+          [attr.aria-label]="'Name'"
+        ></textarea>
+      </tui-textfield>
+      @if (nameError) {
+        <span class="error-text">{{ nameError }}</span>
       }
-    </tui-textfield>
+    </div>
 
-    <!-- Icon -->
-    <tui-textfield>
-      <label tuiLabel>Icon</label>
-      <input tuiInput [(ngModel)]="icon" placeholder="Ex: home, settings" [attr.aria-label]="'Icon'" />
-    </tui-textfield>
+    <!-- Icon + Background Color (side by side) -->
+    <div class="row">
+      <div class="row-field icon-picker-wrapper">
+        <span class="field-label">Icon</span>
+        <button
+          tuiButton
+          appearance="floating"
+          type="button"
+          size="m"
+          class="icon-select-btn"
+          #iconPickerBtn
+          (click)="openIconPicker(iconPickerBtn)"
+        >
+          @if (icon()) {
+            <tui-icon [icon]="'@tui.' + icon()" />
+            <span>{{ icon() }}</span>
+          } @else {
+            <tui-icon icon="@tui.image" />
+            <span>Select an icon</span>
+          }
+          <tui-icon icon="@tui.chevron-down" class="chevron" />
+        </button>
+
+        @if (iconPickerOpen()) {
+          <div class="icon-picker-backdrop" (click)="closeIconPicker()"></div>
+          <div class="icon-picker-dropdown">
+            <div class="icon-picker-search">
+              <tui-textfield tuiTextfieldSize="s">
+                <input
+                  tuiInput
+                  [ngModel]="searchQuery()"
+                  (ngModelChange)="searchQuery.set($event)"
+                  placeholder="Search icons..."
+                />
+              </tui-textfield>
+            </div>
+            <div class="icon-picker-grid" [style.max-block-size.px]="iconPickerMaxHeight()">
+              @for (entry of filteredIcons(); track entry.name) {
+                <button
+                  type="button"
+                  class="icon-item"
+                  [class.selected]="entry.name === icon()"
+                  [title]="entry.label"
+                  (click)="selectIcon(entry.name)"
+                >
+                  <tui-icon [icon]="'@tui.' + entry.name" />
+                </button>
+              }
+              @empty {
+                <span class="icon-picker-empty">No icons found</span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="row-field">
+        <span class="field-label">Background color</span>
+        <tui-textfield class="color-field" tuiTextfieldSize="m">
+          <input tuiInputColor [(ngModel)]="backgroundColor" placeholder="#1DB954" [attr.aria-label]="'Background color'" />
+        </tui-textfield>
+      </div>
+    </div>
 
     <!-- Display mode + Action type (side by side) -->
     <div class="row">
@@ -154,19 +210,37 @@
     </div>
 
     <!-- Action Value -->
-    <tui-textfield [class.field-error]="actionValueError()">
-      <label tuiLabel>{{ actionValueLabel() }}</label>
-      <input tuiInput [(ngModel)]="actionValue" [placeholder]="actionValuePlaceholder()" [attr.aria-label]="actionValueLabel()" />
-      @if (actionValueError()) {
-        <span class="error-text">{{ actionValueError() }}</span>
+    <div class="field-group">
+      <span class="field-label">{{ actionValueLabel() }}</span>
+      <tui-textfield
+        class="action-value-field"
+        tuiTextfieldSize="m"
+        [class.field-error]="actionValueError"
+      >
+        <input
+          tuiInput
+          [ngModel]="actionValue"
+          (ngModelChange)="onActionValueChange($event)"
+          [placeholder]="actionValuePlaceholder()"
+          [attr.aria-label]="actionValueLabel()"
+          (keydown.enter)="onSave(); $event.preventDefault()"
+        />
+      </tui-textfield>
+      @if (actionValueError) {
+        <span class="error-text">{{ actionValueError }}</span>
       }
-    </tui-textfield>
-
-    <!-- Background Color -->
-    <tui-textfield>
-      <label tuiLabel>Background color</label>
-      <input tuiInputColor [(ngModel)]="backgroundColor" placeholder="#1DB954" [attr.aria-label]="'Background color'" />
-    </tui-textfield>
+      @if (actionType() === 'app' && appStatus() !== 'idle') {
+        <span class="app-hint" [class.app-valid]="appStatus() === 'valid'" [class.app-invalid]="appStatus() === 'invalid'">
+          @if (appStatus() === 'checking') {
+            Checking...
+          } @else if (appStatus() === 'valid') {
+            ✓ App found
+          } @else if (appStatus() === 'invalid') {
+            ⚠ App not found
+          }
+        </span>
+      }
+    </div>
 
     <!-- Bottom actions -->
     <div class="actions">

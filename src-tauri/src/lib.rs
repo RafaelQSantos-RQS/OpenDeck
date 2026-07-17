@@ -44,7 +44,10 @@ pub fn run() {
             commands::get_buttons,
             commands::create_button,
             commands::update_button,
-            commands::delete_button
+            commands::delete_button,
+            commands::execute_app,
+            commands::execute_command,
+            commands::validate_app
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -1,0 +1,231 @@
+.titlebar {
+	height: 30px;
+	background: var(--tui-background-base);
+	user-select: none;
+	display: grid;
+	grid-template-columns: max-content auto max-content;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+
+	.menu-section {
+		position: relative;
+		display: flex;
+		align-items: center;
+	}
+
+	>.controls {
+		display: flex;
+	}
+
+	.drag-region {
+		flex-grow: 1;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+		user-select: none;
+		font-size: 14px;
+		font-weight: 500;
+		color: var(--tui-text-primary);
+	}
+
+	button {
+		appearance: none;
+		padding: 0;
+		margin: 0;
+		border: none;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		width: 30px;
+		height: 30px;
+		background-color: transparent;
+		cursor: pointer;
+
+		tui-icon {
+			width: 14px;
+			height: 14px;
+		}
+
+		.icon-circle {
+			width: 20px;
+			height: 20px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border-radius: 50%;
+			transition: background-color 0.2s ease;
+		}
+
+		&[title="minimize"]:hover .icon-circle {
+			background-color: var(--tui-status-warning);
+		}
+
+		&[title="close"]:hover .icon-circle {
+			background-color: var(--tui-text-negative);
+		}
+
+		&:hover tui-icon {
+			color: var(--tui-text-primary);
+		}
+	}
+
+	/* ── Hamburger Button ── */
+	.hamburger-btn {
+		width: 34px;
+		height: 30px;
+		transition: background 0.15s;
+
+		&:hover {
+			background: var(--tui-background-neutral-2);
+		}
+
+		tui-icon {
+			width: 18px;
+			height: 18px;
+			color: var(--tui-text-secondary);
+			transition: color 0.15s;
+		}
+
+		&:hover tui-icon {
+			color: var(--tui-text-primary);
+		}
+	}
+
+	/* ── Dropdown Menu ── */
+	.dropdown-backdrop {
+		position: fixed;
+		inset: 0;
+		z-index: 999;
+		background: transparent;
+	}
+
+	.dropdown-menu {
+		display: flex;
+		flex-direction: column;
+		position: absolute;
+		inset-block-start: 100%;
+		inset-inline-start: 0;
+		z-index: 1000;
+		min-inline-size: 150px;
+		padding: 4px;
+		background: var(--tui-background-elevation-3);
+		border: 1px solid var(--tui-border-normal);
+		border-radius: 8px;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	}
+
+	.menu-item {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 6px;
+		inline-size: 100%;
+		padding: 4px 12px;
+		font-size: 12px;
+		block-size: 28px;
+		background: none;
+		border: none;
+		cursor: pointer;
+		color: var(--tui-text-primary);
+		white-space: nowrap;
+
+		tui-icon {
+			width: 14px;
+			height: 14px;
+			opacity: 0.7;
+		}
+
+		&:hover {
+			background: var(--tui-background-neutral-2);
+			border-radius: 4px;
+		}
+	}
+}
+
+/* ── About Dialog ── */
+.about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 8px 0;
+    min-inline-size: 280px;
+}
+
+.about-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .about-icon {
+        font-size: 2rem;
+        inline-size: 2rem;
+        block-size: 2rem;
+        color: var(--tui-text-accent-1);
+    }
+
+    h2 {
+        margin: 0;
+        font: var(--tui-typography-heading-h5);
+    }
+
+    .about-version {
+        margin: 0;
+        font: var(--tui-typography-body-s);
+        color: var(--tui-text-secondary);
+    }
+}
+
+.about-description {
+    margin: 0;
+    font: var(--tui-typography-body-s);
+    color: var(--tui-text-secondary);
+    line-height: 1.5;
+}
+
+.about-divider {
+    block-size: 1px;
+    background: var(--tui-border-normal);
+    margin: 4px 0;
+}
+
+.about-dev {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font: var(--tui-typography-body-s);
+
+    tui-icon {
+        font-size: 1.2rem;
+        inline-size: 1.2rem;
+        block-size: 1.2rem;
+        color: var(--tui-text-accent-1);
+    }
+}
+
+.about-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font: var(--tui-typography-body-s);
+    color: var(--tui-text-accent-1);
+    text-decoration: none;
+
+    tui-icon {
+        font-size: 1.2rem;
+        inline-size: 1.2rem;
+        block-size: 1.2rem;
+    }
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.about-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-block-start: 4px;
+}

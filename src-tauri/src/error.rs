@@ -22,6 +22,10 @@ pub enum AppError {
     #[error("Database error: {message}")]
     #[serde(rename = "database_error")]
     DatabaseError { message: String },
+
+    #[error("Execution error: {message}")]
+    #[serde(rename = "execution_error")]
+    ExecutionError { message: String },
 }
 
 impl From<sea_orm::DbErr> for AppError {

@@ -29,7 +29,7 @@ pub async fn create_button(
     state: State<'_, AppState>,
     data: CreateButtonData,
 ) -> Result<Button, AppError> {
-    if !(0..=6).contains(&data.position) {
+    if !(0..=5).contains(&data.position) {
         return Err(AppError::InvalidPosition {
             position: data.position,
             min: 0,

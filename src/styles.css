@@ -1,8 +1,20 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 [data-tui-theme] {
     --tui-theme: dark;
 }
 
 tui-root {
-    min-height: 100vh;
-    background: #161616;
+    background: var(--tui-background-base);
+    block-size: 100vh;
+}
+
+body.blurred {
+    filter: blur(6px);
+    transition: filter 0.2s ease;
+    pointer-events: none;
 }
